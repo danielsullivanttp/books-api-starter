@@ -2,9 +2,10 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
+const db = require("./db");
 // TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
-// TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined.
 
+// TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined. 
 const app = express();
 const PORT = 8080;
 

@@ -9,7 +9,22 @@ const dbConnection = require('../db')
 //   publishedYear  INTEGER
 //   available      BOOLEAN  defaults to true
 const Book = dbConnection.define('book', {
-
-})
+title: {
+      type: Book.STRING,
+      allowNull: false    },
+    author: {
+      type: Book.STRING,
+      allowNull: false
+    },
+    genre: {
+        type: Book.STRING
+    }, 
+    publishedYear: {
+        type: Book.INTEGER    
+    },
+    available: {
+        type: Book.BOOLEAN,
+        defaultValue: true    
+}})
 
 module.exports = Book

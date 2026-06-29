@@ -148,3 +148,4 @@ async function startApp() {
 }
 
 startApp();
+db.authenticate().then(() => console.log("DB connected")).catch(console.error)

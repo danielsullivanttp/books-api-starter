@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const dbConnect = require("./db");
-const bookModel = require('./models/book')
+const {bookModel, review} = require('./models')
 // TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
 // TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined. 
 const app = express();
@@ -38,7 +38,7 @@ app.get("/", (request, response) => {
 // TODO: Workshop: swap `books` for the Book method that returns every row.
 app.get("/api/books", async (request, response, next) => {
   try {
-    const books  = await bookModel.findAll();
+    const books  = await bookModel.findAll({include: review});
     response.json(books);
   } catch (error) {
     next(error);
@@ -51,7 +51,7 @@ app.get("/api/books", async (request, response, next) => {
 app.get("/api/books/:id", async (request, response, next) => {
   try {
     const id = Number(request.params.id); // request.params.id is always a string — Number() makes it comparable
-    const book = await bookModel.findByPk(id);
+    const book = await bookModel.findByPk(id, {include: review} );
 
     if (!book) {
       return response.sendStatus(404);
@@ -74,6 +74,26 @@ app.post("/api/books", async (request, response, next) => {
     next(error);
   }
 });
+
+app.post("/api/books/:bookId/reviews", async (request, response, next) => {
+ try{
+  const id = Number(request.params.bookId);  
+  const book = await bookModel.findByPk(id);
+  if(!book){
+        return response.statusCode(404);
+  }
+  
+  await review.create({
+    ...request.body,
+    bookId: id
+  })
+  response.sendStatus(201);
+  
+} catch(err){
+  next(err);
+}
+  })
+
 
 // Part 6: PATCH an existing book — only changes the fields that were sent
 // TODO: Workshop: find the book the same Sequelize way as the GET-one route above,
@@ -134,9 +154,9 @@ async function startApp() {
  
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));  
 }
-
-startApp();
 dbConnect.authenticate().then(() => console.log("DB connected")).catch(console.error)
+startApp();
+
 
 /*const express = require("express");
 const morgan = require("morgan");
